@@ -3,6 +3,7 @@ on: [push, workflow_dispatch]
 
 jobs:
   build:
-    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
+    # Match the vendor template's v0.3 workflow, pinned for reproducibility.
+    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@edf5c0814fd3ea202e43aad2d68fd32e882a518c
     with:
       archive_name: firmware-selenium
