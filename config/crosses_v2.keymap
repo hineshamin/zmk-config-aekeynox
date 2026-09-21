@@ -13,11 +13,21 @@
 // The current US QWERTY configuration has eight core Selenium layers.
 // This macro is expanded after Selenium defines EXTRA_LAYERS_START_INDEX.
 #define CROSSES_MOUSE_LAYER EXTRA_LAYERS_START_INDEX
+#define CROSSES_DEVICE_GATE_LAYER (EXTRA_LAYERS_START_INDEX + 1)
+#define CROSSES_DEVICE_LAYER (EXTRA_LAYERS_START_INDEX + 2)
 #define HT_HOME_ROW_MODS
 #include <aekeynox/selenium.keymap>
 
 // Select the hardware module's 42-key layout and its matrix transform.
 / {
+  conditional_layers {
+    compatible = "zmk,conditional-layers";
+    device {
+      if-layers = <FN_MEDIA_LAYER CROSSES_DEVICE_GATE_LAYER>;
+      then-layer = <CROSSES_DEVICE_LAYER>;
+    };
+  };
+
   chosen {
     zmk,physical-layout = &gggw_crosses_42_layout;
   };
@@ -36,16 +46,40 @@
                                &trans    &trans    &trans     &trans   &trans    &trans
       >;
     };
+
+    // This transparent gate has no device actions of its own. The conditional
+    // layer below requires FnMedia too, so releasing either hold exits Device.
+    device_gate_layer {
+      display-name = "Device Gate";
+      bindings = <
+        &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+        &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+        &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
+                                    &trans &trans &trans &trans &trans &trans
+      >;
+    };
+
+    device_layer {
+      display-name = "Device";
+      // Hold Fn + T. Y/U/I/O/P select host profiles 0/1/2/3/4.
+      // G clears only the current host profile; B unlocks Studio.
+      bindings = <
+        &none &none &none &none &none &trans          &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4 &none
+        &none &none &none &none &none &bt BT_CLR      &none &none &none &none &none &none
+        &none &none &none &none &none &studio_unlock  &none &none &none &none &none &none
+                          &none &none &trans        &trans &none &none
+      >;
+    };
   };
 };
 
-// Expose all five host profiles. Put profiles 3 and 4 on the unused G/B
-// positions; bootloader entry and restart use only the physical switches.
+// Keep device actions off FnMedia; T is only a momentary access gate.
+// Bootloader entry and restart use only the physical switches.
 &fn_media_layer {
   bindings = <SELENIUM_KEYMAP_BINDINGS(
-    &trans , &kp F1 &kp F2 &kp F3 &kp F4 &none , &bt BT_SEL 2 &kp C_NEXT &kp C_VOL_UP &kp C_BRI_UP &kp SLCK , &trans ,
-    &trans , &kp F5 &kp F6 &kp F7 &kp F8 &bt BT_SEL 3 , &bt_sel1_clr &UH1 C_PP &UH2 C_MUTE &UH3 C_AL_LOCK &UH4 PSCRN , &trans ,
-    &trans , &kp F9 &kp F10 &kp F11 &kp F12 &bt BT_SEL 4 , &bt BT_SEL 0 &kp C_PREV &kp C_VOL_DN &kp C_BRI_DN &kp INS , &trans ,
-    &trans , &trans , &trans , &trans , &trans , &studio_unlock
+    &trans , &kp F1 &kp F2 &kp F3 &kp F4 &mo CROSSES_DEVICE_GATE_LAYER , &none &kp C_NEXT &kp C_VOL_UP &kp C_BRI_UP &kp SLCK , &trans ,
+    &trans , &kp F5 &kp F6 &kp F7 &kp F8 &none , &none &UH1 C_PP &UH2 C_MUTE &UH3 C_AL_LOCK &UH4 PSCRN , &trans ,
+    &trans , &kp F9 &kp F10 &kp F11 &kp F12 &none , &none &kp C_PREV &kp C_VOL_DN &kp C_BRI_DN &kp INS , &trans ,
+    &trans , &trans , &trans , &trans , &trans , &none
   )>;
 };
