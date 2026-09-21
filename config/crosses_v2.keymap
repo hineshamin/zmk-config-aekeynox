@@ -13,7 +13,7 @@
 // The current US QWERTY configuration has eight core Selenium layers.
 // This macro is expanded after Selenium defines EXTRA_LAYERS_START_INDEX.
 #define CROSSES_MOUSE_LAYER EXTRA_LAYERS_START_INDEX
-#define HT_THUMB_TAPS
+#define HT_HOME_ROW_MODS
 #include <aekeynox/selenium.keymap>
 
 // Select the hardware module's 42-key layout and its matrix transform.
@@ -37,4 +37,15 @@
       >;
     };
   };
+};
+
+// Expose all five host profiles. Replace the two firmware reset keys with
+// profiles 3 and 4; bootloader entry and restart use the physical switches.
+&fn_media_layer {
+  bindings = <SELENIUM_KEYMAP_BINDINGS(
+    &trans , &kp F1 &kp F2 &kp F3 &kp F4 &none , &bt BT_SEL 2 &kp C_NEXT &kp C_VOL_UP &kp C_BRI_UP &kp SLCK , &trans ,
+    &trans , &kp F5 &kp F6 &kp F7 &kp F8 &none , &bt_sel1_clr &UH1 C_PP &UH2 C_MUTE &UH3 C_AL_LOCK &UH4 PSCRN , &trans ,
+    &trans , &kp F9 &kp F10 &kp F11 &kp F12 &none , &bt BT_SEL 0 &kp C_PREV &kp C_VOL_DN &kp C_BRI_DN &kp INS , &trans ,
+    &trans , &bt BT_SEL 3 , &trans , &trans , &bt BT_SEL 4 , &studio_unlock
+  )>;
 };
