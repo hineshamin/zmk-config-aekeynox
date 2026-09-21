@@ -1,5 +1,18 @@
 // Crosses V2: 3x6 keys + 3 thumbs per side.
-// Like Corne, use Ækeynox's default 42-key bindings and shared Selenium layers.
+// Keep Selenium's shared layers and thumb bindings. The two outer bottom
+// corners provide momentary mouse access on every Selenium layer.
+#define SELENIUM_KEYMAP_BINDINGS(LOUT1, LROW1, RROW1, ROUT1, \
+                                 LOUT2, LROW2, RROW2, ROUT2, \
+                                 LOUT3, LROW3, RROW3, ROUT3, \
+                                 LT1, LT2, LT3, RT3, RT2, RT1) \
+    LOUT1 LROW1 RROW1 ROUT1 \
+    LOUT2 LROW2 RROW2 ROUT2 \
+    &mo CROSSES_MOUSE_LAYER LROW3 RROW3 &mo CROSSES_MOUSE_LAYER \
+    LT1 LT2 LT3 RT3 RT2 RT1
+
+// The current US QWERTY configuration has eight core Selenium layers.
+// This macro is expanded after Selenium defines EXTRA_LAYERS_START_INDEX.
+#define CROSSES_MOUSE_LAYER EXTRA_LAYERS_START_INDEX
 #define HT_THUMB_TAPS
 #include <aekeynox/selenium.keymap>
 
@@ -7,5 +20,21 @@
 / {
   chosen {
     zmk,physical-layout = &gggw_crosses_42_layout;
+  };
+
+  keymap {
+    mouse_layer {
+      display-name = "Mouse";
+      // Physical positions: F/J = left, D/K = right, S/L = middle.
+      // R/U = back, T/Y = forward (mouse buttons 4/5; app-dependent).
+      // Hold a click key while rolling a ball to drag. No latched buttons.
+      // Unused finger keys are disabled; thumbs retain Selenium modifiers.
+      bindings = <
+        &none  &none &none      &none      &mkp MB4  &mkp MB5   &mkp MB5 &mkp MB4  &none      &none      &none &none
+        &none  &none &mkp MCLK  &mkp RCLK  &mkp LCLK &none      &none    &mkp LCLK &mkp RCLK  &mkp MCLK  &none &none
+        &trans &none &none      &none      &none     &none      &none    &none     &none      &none      &none &trans
+                               &trans    &trans    &trans     &trans   &trans    &trans
+      >;
+    };
   };
 };
