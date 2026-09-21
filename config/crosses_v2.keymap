@@ -1,0 +1,11 @@
+// Crosses V2: 3x6 keys + 3 thumbs per side.
+// Like Corne, use Ækeynox's default 42-key bindings and shared Selenium layers.
+#define HT_THUMB_TAPS
+#include <aekeynox/selenium.keymap>
+
+// Select the hardware module's 42-key layout and its matrix transform.
+/ {
+  chosen {
+    zmk,physical-layout = &gggw_crosses_42_layout;
+  };
+};

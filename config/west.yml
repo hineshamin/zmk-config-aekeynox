@@ -20,6 +20,12 @@ manifest:
       url-base: https://github.com/rloutier
     - name: rschenk
       url-base: https://github.com/rschenk
+    - name: gggw
+      url-base: https://github.com/Good-Great-Grand-Wonderful
+    - name: badjeff
+      url-base: https://github.com/badjeff
+    - name: black-trooper
+      url-base: https://github.com/black-trooper
 
   projects:
       # We rely on a fork of ZMK for a couple of reasons:
@@ -80,6 +86,31 @@ manifest:
     - name: zmk-keyboard-re-gret
       remote: rschenk
       revision: 34ca1fc7dc6991475b0c20f2c8361598e7aaeaca
+
+      # Crosses V2: onboard nRF52840, right central, dual trackballs.
+      # Pin the dependencies from its config/west.yml explicitly to retain
+      # our ZMK fork and avoid the module's floating dependency revisions.
+    - name: crosses-v2-zmk-firmware
+      remote: gggw
+      revision: a4279793633de831c849e065663d01c05f1c89cd
+    - name: zmk-input-processor-report-rate-limit
+      remote: badjeff
+      revision: b056cb135525933743e2627150fb390f9d4b2461
+    - name: zmk-input-processor-xyz
+      remote: badjeff
+      revision: edb44b7261796a11b3aaecc0f75f1da615789b90
+    - name: zmk-driver-paw3222
+      remote: black-trooper
+      revision: 4797c7c094ae45722a43f3217b3261095df82eac
+    - name: zmk-behavior-paw32xx-res-cycle
+      remote: gggw
+      revision: 98c8583f999ab810bfe2f87a663251e1d5064f03
+    - name: zmk-input-processor-pipeline-switch
+      remote: gggw
+      revision: 6dde67a12f6c604300e94a412fb6f70a2cf33429
+    - name: zmk-trackball-config
+      remote: gggw
+      revision: 66af329fa4ea6484a09384f63189d921cf2df515
 
   self:
     path: config

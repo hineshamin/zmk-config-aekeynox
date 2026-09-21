@@ -152,6 +152,15 @@ include:
   - board: go60_rh
     artifact-name: go60_right
 
+    # Crosses V2 42-key (right central)
+  - board: crosses_v2_left
+    artifact-name: crosses_v2_42_left
+  - board: crosses_v2_right
+    artifact-name: crosses_v2_42_right
+    # Studio uses BLE; reserve USB CDC-ACM for the trackball config app.
+    # Keep all behaviors available in Studio without the USB UART snippet.
+    cmake-args: -DCONFIG_ZMK_STUDIO=y -DDTS_EXTRA_CPPFLAGS="-DZMK_BEHAVIORS_KEEP_ALL"
+
 
   ###
   # BLE Resets
@@ -169,3 +178,8 @@ include:
   - board: nice_nano@2//zmk
     shield: settings_reset
     artifact-name: nice_nano_v2_settings_reset
+
+    # Crosses V2
+  - board: crosses_v2_right
+    shield: settings_reset
+    artifact-name: crosses_v2_settings_reset
