@@ -26,11 +26,11 @@
     mouse_layer {
       display-name = "Mouse";
       // Physical positions: F/J = left, D/K = right, S/L = middle.
-      // R/U = back, T/Y = forward (mouse buttons 4/5; app-dependent).
+      // E/I = back, R/U = forward (mouse buttons 4/5; app-dependent).
       // Hold a click key while rolling a ball to drag. No latched buttons.
       // Unused finger keys are disabled; thumbs retain Selenium modifiers.
       bindings = <
-        &none  &none &none      &none      &mkp MB4  &mkp MB5   &mkp MB5 &mkp MB4  &none      &none      &none &none
+        &none  &none &none      &mkp MB4   &mkp MB5  &none      &none    &mkp MB5  &mkp MB4   &none      &none &none
         &none  &none &mkp MCLK  &mkp RCLK  &mkp LCLK &none      &none    &mkp LCLK &mkp RCLK  &mkp MCLK  &none &none
         &trans &none &none      &none      &none     &none      &none    &none     &none      &none      &none &trans
                                &trans    &trans    &trans     &trans   &trans    &trans
@@ -39,13 +39,13 @@
   };
 };
 
-// Expose all five host profiles. Replace the two firmware reset keys with
-// profiles 3 and 4; bootloader entry and restart use the physical switches.
+// Expose all five host profiles. Put profiles 3 and 4 on the unused G/B
+// positions; bootloader entry and restart use only the physical switches.
 &fn_media_layer {
   bindings = <SELENIUM_KEYMAP_BINDINGS(
     &trans , &kp F1 &kp F2 &kp F3 &kp F4 &none , &bt BT_SEL 2 &kp C_NEXT &kp C_VOL_UP &kp C_BRI_UP &kp SLCK , &trans ,
-    &trans , &kp F5 &kp F6 &kp F7 &kp F8 &none , &bt_sel1_clr &UH1 C_PP &UH2 C_MUTE &UH3 C_AL_LOCK &UH4 PSCRN , &trans ,
-    &trans , &kp F9 &kp F10 &kp F11 &kp F12 &none , &bt BT_SEL 0 &kp C_PREV &kp C_VOL_DN &kp C_BRI_DN &kp INS , &trans ,
-    &trans , &bt BT_SEL 3 , &trans , &trans , &bt BT_SEL 4 , &studio_unlock
+    &trans , &kp F5 &kp F6 &kp F7 &kp F8 &bt BT_SEL 3 , &bt_sel1_clr &UH1 C_PP &UH2 C_MUTE &UH3 C_AL_LOCK &UH4 PSCRN , &trans ,
+    &trans , &kp F9 &kp F10 &kp F11 &kp F12 &bt BT_SEL 4 , &bt BT_SEL 0 &kp C_PREV &kp C_VOL_DN &kp C_BRI_DN &kp INS , &trans ,
+    &trans , &trans , &trans , &trans , &trans , &studio_unlock
   )>;
 };
