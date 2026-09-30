@@ -89,12 +89,12 @@
   )>;
 };
 
-// Keep mouse and device actions off FnMedia itself. S and T are momentary
-// access gates; bootloader entry and restart use only the physical switches.
+// S taps F6 or acts as the Mouse access gate when held. T is the Device
+// access gate. Bootloader entry and restart use only the physical switches.
 &fn_media_layer {
   bindings = <SELENIUM_KEYMAP_BINDINGS(
     &trans , &kp F1 &kp F2 &kp F3 &kp F4 &mo CROSSES_DEVICE_GATE_LAYER , &none &kp C_NEXT &kp C_VOL_UP &kp C_BRI_UP &kp SLCK , &trans ,
-    &trans , &kp F5 &mo CROSSES_MOUSE_GATE_LAYER &kp F7 &kp F8 &none , &none &UH1 C_PP &UH2 C_MUTE &UH3 C_AL_LOCK &UH4 PSCRN , &trans ,
+    &trans , &kp F5 &lt CROSSES_MOUSE_GATE_LAYER F6 &kp F7 &kp F8 &none , &none &UH1 C_PP &UH2 C_MUTE &UH3 C_AL_LOCK &UH4 PSCRN , &trans ,
     &trans , &kp F9 &kp F10 &kp F11 &kp F12 &none , &none &kp C_PREV &kp C_VOL_DN &kp C_BRI_DN &kp INS , &trans ,
     &trans , &trans , &trans , &trans , &trans , &none
   )>;
