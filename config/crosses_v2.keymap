@@ -1,9 +1,8 @@
 // The current US QWERTY configuration has eight core Selenium layers.
 // This macro is expanded after Selenium defines EXTRA_LAYERS_START_INDEX.
-#define CROSSES_MOUSE_GATE_LAYER EXTRA_LAYERS_START_INDEX
-#define CROSSES_MOUSE_LAYER (EXTRA_LAYERS_START_INDEX + 1)
-#define CROSSES_DEVICE_GATE_LAYER (EXTRA_LAYERS_START_INDEX + 2)
-#define CROSSES_DEVICE_LAYER (EXTRA_LAYERS_START_INDEX + 3)
+#define CROSSES_MOUSE_LAYER EXTRA_LAYERS_START_INDEX
+#define CROSSES_DEVICE_GATE_LAYER (EXTRA_LAYERS_START_INDEX + 1)
+#define CROSSES_DEVICE_LAYER (EXTRA_LAYERS_START_INDEX + 2)
 #define HT_HOME_ROW_MODS
 #include <aekeynox/selenium.keymap>
 
@@ -11,10 +10,6 @@
 / {
   conditional_layers {
     compatible = "zmk,conditional-layers";
-    mouse {
-      if-layers = <FN_MEDIA_LAYER CROSSES_MOUSE_GATE_LAYER>;
-      then-layer = <CROSSES_MOUSE_LAYER>;
-    };
     device {
       if-layers = <FN_MEDIA_LAYER CROSSES_DEVICE_GATE_LAYER>;
       then-layer = <CROSSES_DEVICE_LAYER>;
@@ -26,18 +21,6 @@
   };
 
   keymap {
-    // This transparent gate combines with FnMedia below. Releasing either
-    // FnMedia or S exits Mouse, matching the guarded Device layer behavior.
-    mouse_gate_layer {
-      display-name = "Mouse Gate";
-      bindings = <
-        &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
-        &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
-        &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans &trans
-                                    &trans &trans &trans &trans &trans &trans
-      >;
-    };
-
     mouse_layer {
       display-name = "Mouse";
       // Physical positions: F/J = left and D/K = right.
@@ -79,22 +62,22 @@
 };
 
 // Crosses V2 has room for dedicated apostrophe and hyphen keys. Keep the
-// remainder of Selenium's base layer, including its home-row mods and thumbs.
+// remainder of Selenium's base layer, with Tab-hold dedicated to Mouse.
 &base_layer {
   bindings = <SELENIUM_KEYMAP_BINDINGS(
     &kp LTOP   ,  &kp Q  &kp W  &kp E  &kp R  &kp T   ,   &kp Y  &kp U  &kp I     &kp O   &kp P     ,  &kp MINUS  ,
     &kp LHOME  ,  &H4 A  &H3 S  &H2 D  &H1 F  &kp G   ,   &kp H  &H1 J  &H2 K     &H3 L   &H4 SEMI  ,  &kp SQT    ,
     &kp LSHIFT ,  &kp Z  &kp X  &kp C  &kp V  &kp B   ,   &kp N  &kp M  &kp COMMA &kp DOT &kp FSLH  ,  &kp RSHIFT ,
-           LTHUMB_TUCK , LTHUMB_HOME , LTHUMB_REACH   ,   RTHUMB_REACH , RTHUMB_HOME , RTHUMB_TUCK
+           LTHUMB_TUCK , LTHUMB_HOME , &lt CROSSES_MOUSE_LAYER TAB   ,   RTHUMB_REACH , RTHUMB_HOME , RTHUMB_TUCK
   )>;
 };
 
-// S taps F6 or acts as the Mouse access gate when held. T is the Device
-// access gate. Bootloader entry and restart use only the physical switches.
+// T is the Device access gate. The left Tab thumb now holds Mouse, so Enter
+// remains the FnMedia hold. Bootloader and restart use the physical switches.
 &fn_media_layer {
   bindings = <SELENIUM_KEYMAP_BINDINGS(
     &trans , &kp F1 &kp F2 &kp F3 &kp F4 &mo CROSSES_DEVICE_GATE_LAYER , &none &kp C_NEXT &kp C_VOL_UP &kp C_BRI_UP &kp SLCK , &trans ,
-    &trans , &kp F5 &lt CROSSES_MOUSE_GATE_LAYER F6 &kp F7 &kp F8 &none , &none &UH1 C_PP &UH2 C_MUTE &UH3 C_AL_LOCK &UH4 PSCRN , &trans ,
+    &trans , &kp F5 &kp F6 &kp F7 &kp F8 &none , &none &UH1 C_PP &UH2 C_MUTE &UH3 C_AL_LOCK &UH4 PSCRN , &trans ,
     &trans , &kp F9 &kp F10 &kp F11 &kp F12 &none , &none &kp C_PREV &kp C_VOL_DN &kp C_BRI_DN &kp INS , &trans ,
     &trans , &trans , &trans , &trans , &trans , &none
   )>;
