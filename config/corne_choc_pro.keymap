@@ -25,6 +25,7 @@
 // continue lists from Aekeynox remain active without it.
 &caps_word {
   /delete-property/ no-default-keys;
+  /delete-property/ shift-list;
 };
 
 / {
