@@ -1,17 +1,21 @@
-# Build only the Crosses V2 42-key firmware for this keyboard.
+# Build only the Keebart Corne Choc Pro BT firmware for this keyboard.
 include:
-  - board: crosses_v2_left
-    artifact-name: crosses_v2_42_left
-  - board: crosses_v2_right
-    artifact-name: crosses_v2_42_right
-    # Studio uses BLE; reserve USB CDC-ACM for the trackball config app.
-    # Keep all behaviors available in Studio without the USB UART snippet.
+  - board: corne_choc_pro_left
+    shield: sharp_mip
+    snippet: studio-rpc-usb-uart
     cmake-args: -DCONFIG_ZMK_STUDIO=y -DDTS_EXTRA_CPPFLAGS="-DZMK_BEHAVIORS_KEEP_ALL"
+    artifact-name: corne_choc_pro_bt_left
+  - board: corne_choc_pro_right
+    shield: sharp_mip
+    snippet: studio-rpc-usb-uart
+    artifact-name: corne_choc_pro_bt_right
 
   # Recovery targets: clear saved settings and Bluetooth bonds on each half.
-  - board: crosses_v2_left
+  - board: corne_choc_pro_left
     shield: settings_reset
-    artifact-name: crosses_v2_left_settings_reset
-  - board: crosses_v2_right
+    snippet: studio-rpc-usb-uart
+    artifact-name: corne_choc_pro_bt_left_settings_reset
+  - board: corne_choc_pro_right
     shield: settings_reset
-    artifact-name: crosses_v2_settings_reset
+    snippet: studio-rpc-usb-uart
+    artifact-name: corne_choc_pro_bt_right_settings_reset
