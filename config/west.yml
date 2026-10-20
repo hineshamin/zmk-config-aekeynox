@@ -29,9 +29,11 @@ manifest:
       # 2. to add some more advanced features that aren’t present upstream
       #    (unmerged PRs, custom patches…)
       # More info on the changes present can be found on the fork’s README page.
+      # Keebart's official board module currently uses Zephyr's v1 board format,
+      # so keep the last pre-Zephyr-4.1 Ækeynox revision for this keyboard.
     - name: zmk
       remote: NuclearSquid
-      revision: aekeynox
+      revision: abb64ba316c29caddc49727ca2cac2f0ed5970c7
       import: app/west.yml
 
       ###
