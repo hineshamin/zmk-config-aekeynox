@@ -5,7 +5,6 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
-#include <zephyr/random/random.h>
 
 #include <zmk/battery.h>
 #include <zmk/display.h>
@@ -20,7 +19,6 @@
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
-LV_IMG_DECLARE(balloon);
 LV_IMG_DECLARE(mountain);
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
@@ -108,8 +106,7 @@ int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
     lv_canvas_set_buffer(top, widget->cbuf, CANVAS_SIZE, CANVAS_SIZE, LV_IMG_CF_TRUE_COLOR);
 
     lv_obj_t *art = lv_img_create(widget->obj);
-    bool random = sys_rand32_get() & 1;
-    lv_img_set_src(art, random ? &balloon : &mountain);
+    lv_img_set_src(art, &mountain);
     lv_obj_align(art, LV_ALIGN_TOP_LEFT, art_pos, 0);
 
     sys_slist_append(&widgets, &widget->node);
