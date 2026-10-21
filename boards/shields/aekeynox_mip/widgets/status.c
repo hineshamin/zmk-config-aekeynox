@@ -206,10 +206,10 @@ static void draw_all(lv_obj_t *widget, lv_color_t top_buffer[], lv_color_t middl
 
     if (layer_is(state, "Symbols")) {
         draw_grid(top, &symbols_right[0][0], 3, 5);
-        draw_grid(bottom, &symbols_left[0][0], 3, 5);
+        draw_grid(middle, &symbols_left[0][0], 3, 5);
     } else if (layer_is(state, "NavNum")) {
         draw_grid(top, &navnum_right[0][0], 3, 5);
-        draw_grid(bottom, &navnum_left[0][0], 3, 5);
+        draw_grid(middle, &navnum_left[0][0], 3, 5);
     } else if (layer_is(state, "FnMedia")) {
         draw_grid(top, &fnmedia_right[0][0], 3, 5);
         draw_layer_name(middle, state, 30);
