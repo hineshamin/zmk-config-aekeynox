@@ -70,12 +70,6 @@ static const char *const symbols_right[3][5] = {
     {"|", "!", ";", ":", "?"},
 };
 
-static const char *const navnum_left[3][5] = {
-    {"E", "H", "U", "N", "P"},
-    {"A", "L", "D", "R", "G"},
-    {"U", "X", "C", "V", "R"},
-};
-
 static const char *const navnum_right[3][5] = {
     {"L", "7", "8", "9", "/"},
     {"-", "4", "5", "6", "0"},
@@ -209,7 +203,6 @@ static void draw_all(lv_obj_t *widget, lv_color_t top_buffer[], lv_color_t middl
         draw_grid(middle, &symbols_left[0][0], 3, 5);
     } else if (layer_is(state, "NavNum")) {
         draw_grid(top, &navnum_right[0][0], 3, 5);
-        draw_grid(middle, &navnum_left[0][0], 3, 5);
     } else if (layer_is(state, "FnMedia")) {
         draw_grid(top, &fnmedia_right[0][0], 3, 5);
         draw_layer_name(middle, state, 30);
