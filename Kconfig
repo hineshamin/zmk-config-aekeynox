@@ -1,0 +1,7 @@
+menu "Aekeynox extensions"
+
+config AEKEYNOX_CAPS_WORD_STATUS
+    bool "Expose Caps Word state to display widgets"
+    default n
+
+endmenu

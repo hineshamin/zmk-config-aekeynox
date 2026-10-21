@@ -24,6 +24,7 @@
 // release predates this optional Caps Word property; the explicit shift and
 // continue lists from Aekeynox remain active without it.
 &caps_word {
+  compatible = "aekeynox,behavior-caps-word-status";
   /delete-property/ no-default-keys;
   /delete-property/ shift-list;
 };

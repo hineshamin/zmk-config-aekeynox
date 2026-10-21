@@ -1,0 +1,8 @@
+file_format: "1"
+id: aekeynox_mip
+name: Aekeynox Sharp MIP Display
+type: shield
+url: https://nicekeyboards.com/nice-view
+requires: [nice_view_header]
+features:
+  - display

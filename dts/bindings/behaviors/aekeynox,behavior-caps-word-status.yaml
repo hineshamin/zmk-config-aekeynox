@@ -1,0 +1,15 @@
+# Copyright (c) 2026 Aekeynox contributors
+# SPDX-License-Identifier: MIT
+
+description: Caps Word behavior with a state-change event for status displays
+
+compatible: "aekeynox,behavior-caps-word-status"
+
+include: zero_param.yaml
+
+properties:
+  continue-list:
+    type: array
+    required: true
+  mods:
+    type: int
