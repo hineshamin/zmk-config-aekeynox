@@ -3,8 +3,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include <stdio.h>
-
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
@@ -12,7 +10,6 @@
 #include <zmk/display.h>
 #include <zmk/event_manager.h>
 #include <zmk/events/battery_state_changed.h>
-#include <zmk/events/hid_indicators_changed.h>
 #include <zmk/events/split_peripheral_status_changed.h>
 #include <zmk/events/usb_conn_state_changed.h>
 #include <zmk/split/bluetooth/peripheral.h>
@@ -34,12 +31,6 @@ static void clear_canvas(lv_obj_t *canvas) {
     lv_canvas_draw_rect(canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE, &background);
 }
 
-static uint8_t lock_mask(const struct status_state *state) {
-    return ((state->indicators & BIT(1)) ? BIT(0) : 0) |
-           ((state->indicators & BIT(0)) ? BIT(1) : 0) |
-           ((state->indicators & BIT(2)) ? BIT(2) : 0);
-}
-
 static void draw_all(lv_obj_t *widget, lv_color_t top_buffer[], lv_color_t middle_buffer[],
                      lv_color_t bottom_buffer[], const struct status_state *state) {
     lv_obj_t *top = lv_obj_get_child(widget, 0);
@@ -54,10 +45,6 @@ static void draw_all(lv_obj_t *widget, lv_color_t top_buffer[], lv_color_t middl
     init_label_dsc(&connection, LVGL_FOREGROUND, &lv_font_montserrat_16, LV_TEXT_ALIGN_RIGHT);
     lv_canvas_draw_text(top, 0, 0, CANVAS_SIZE, &connection,
                         state->connected ? LV_SYMBOL_WIFI : LV_SYMBOL_CLOSE);
-    lv_draw_label_dsc_t label;
-    init_label_dsc(&label, LVGL_FOREGROUND, &lv_font_montserrat_14, LV_TEXT_ALIGN_CENTER);
-    lv_canvas_draw_text(middle, 0, 5, CANVAS_SIZE, &label, "LOCKS");
-    draw_indicator_row(middle, 28, "CNS ", lock_mask(state));
 
     rotate_canvas(top, top_buffer);
     rotate_canvas(middle, middle_buffer);
@@ -112,23 +99,6 @@ ZMK_DISPLAY_WIDGET_LISTENER(aekeynox_peripheral_connection, struct peripheral_st
                             update_connection, get_connection)
 ZMK_SUBSCRIPTION(aekeynox_peripheral_connection, zmk_split_peripheral_status_changed);
 
-static void update_indicators(zmk_hid_indicators_t indicators) {
-    struct zmk_widget_status *widget;
-    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
-        widget->state.indicators = indicators;
-        redraw(widget);
-    }
-}
-
-static zmk_hid_indicators_t get_indicators(const zmk_event_t *eh) {
-    const struct zmk_hid_indicators_changed *event = as_zmk_hid_indicators_changed(eh);
-    return event != NULL ? event->indicators : 0;
-}
-
-ZMK_DISPLAY_WIDGET_LISTENER(aekeynox_peripheral_indicators, zmk_hid_indicators_t,
-                            update_indicators, get_indicators)
-ZMK_SUBSCRIPTION(aekeynox_peripheral_indicators, zmk_hid_indicators_changed);
-
 #ifdef CONFIG_SHARP_MIP_ROTATE_180
 static const int top_pos = 0;
 static const int middle_pos = 68;
@@ -155,7 +125,6 @@ int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
     sys_slist_append(&widgets, &widget->node);
     aekeynox_peripheral_battery_init();
     aekeynox_peripheral_connection_init();
-    aekeynox_peripheral_indicators_init();
 
     return 0;
 }
