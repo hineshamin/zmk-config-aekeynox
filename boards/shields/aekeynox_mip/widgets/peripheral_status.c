@@ -59,13 +59,6 @@ static void draw_all(lv_obj_t *widget, lv_color_t top_buffer[], lv_color_t middl
     lv_canvas_draw_text(middle, 0, 5, CANVAS_SIZE, &label, "LOCKS");
     draw_indicator_row(middle, 28, "CNS ", lock_mask(state));
 
-    lv_canvas_draw_text(bottom, 0, 5, CANVAS_SIZE, &label,
-                        state->connected ? "SPLIT OK" : "NO LINK");
-    lv_draw_label_dsc_t detail;
-    init_label_dsc(&detail, LVGL_FOREGROUND, &lv_font_unscii_8, LV_TEXT_ALIGN_CENTER);
-    lv_canvas_draw_text(bottom, 0, 32, CANVAS_SIZE, &detail,
-                        state->charging ? "USB POWER" : "BATTERY");
-
     rotate_canvas(top, top_buffer);
     rotate_canvas(middle, middle_buffer);
     rotate_canvas(bottom, bottom_buffer);

@@ -20,8 +20,8 @@
 #include <zmk/events/ble_active_profile_changed.h>
 #include <zmk/events/endpoint_changed.h>
 #include <zmk/events/hid_indicators_changed.h>
+#include <zmk/events/keycode_state_changed.h>
 #include <zmk/events/layer_state_changed.h>
-#include <zmk/events/modifiers_state_changed.h>
 #include <zmk/events/position_state_changed.h>
 #include <zmk/events/usb_conn_state_changed.h>
 #include <zmk/hid.h>
@@ -71,27 +71,27 @@ static const char *const symbols_right[3][5] = {
 };
 
 static const char *const navnum_left[3][5] = {
-    {"ESC", "HOM", "UP", "END", "PGU"},
-    {"ALL", "LFT", "DN", "RGT", "PGD"},
-    {"UND", "CUT", "CPY", "PST", "RDO"},
+    {"E", "H", "U", "N", "P"},
+    {"A", "L", "D", "R", "G"},
+    {"U", "X", "C", "V", "R"},
 };
 
 static const char *const navnum_right[3][5] = {
-    {"LCK", "7", "8", "9", "/"},
+    {"L", "7", "8", "9", "/"},
     {"-", "4", "5", "6", "0"},
     {",", "1", "2", "3", "."},
 };
 
 static const char *const fnmedia_right[3][5] = {
-    {"--", "NXT", "V+", "B+", "SCR"},
-    {"--", "PLY", "MUT", "LCK", "PRT"},
-    {"--", "PRV", "V-", "B-", "INS"},
+    {" ", ">", "V", "B", "S"},
+    {" ", "P", "M", "L", "P"},
+    {" ", "<", "V", "B", "I"},
 };
 
 static const char *const device_right[3][6] = {
-    {"B1", "B2", "B3", "B4", "B5", "CLR"},
-    {"H-", "H+", "S-", "S+", "ON", "ZMK"},
-    {"E-", "E+", "B-", "B+", "--", "--"},
+    {"1", "2", "3", "4", "5", "X"},
+    {"h", "H", "s", "S", "O", "Z"},
+    {"e", "E", "b", "B", " ", " "},
 };
 
 static bool layer_is(const struct status_state *state, const char *name) {
@@ -148,7 +148,7 @@ static void draw_output(lv_obj_t *canvas, const struct status_state *state) {
 static uint8_t lock_mask(const struct status_state *state) {
     return (state->caps_word ? BIT(0) : 0) |
            ((state->indicators & BIT(1)) ? BIT(1) : 0) |
-           ((state->indicators & BIT(0)) ? BIT(2) : 0) |
+           (((state->indicators & BIT(0)) || layer_is(state, "NumLock")) ? BIT(2) : 0) |
            ((state->indicators & BIT(2)) ? BIT(3) : 0);
 }
 
@@ -207,13 +207,9 @@ static void draw_all(lv_obj_t *widget, lv_color_t top_buffer[], lv_color_t middl
     if (layer_is(state, "Symbols")) {
         draw_grid(top, &symbols_right[0][0], 3, 5);
         draw_grid(bottom, &symbols_left[0][0], 3, 5);
-        draw_layer_name(middle, state, 30);
-        draw_battery(middle, state);
     } else if (layer_is(state, "NavNum")) {
         draw_grid(top, &navnum_right[0][0], 3, 5);
         draw_grid(bottom, &navnum_left[0][0], 3, 5);
-        draw_layer_name(middle, state, 30);
-        draw_battery(middle, state);
     } else if (layer_is(state, "FnMedia")) {
         draw_grid(top, &fnmedia_right[0][0], 3, 5);
         draw_layer_name(middle, state, 30);
@@ -328,12 +324,23 @@ static void update_modifiers(struct modifier_status_state state) {
 }
 
 static struct modifier_status_state get_modifiers(const zmk_event_t *eh) {
-    return (struct modifier_status_state){.modifiers = zmk_hid_get_explicit_mods()};
+    static zmk_mod_flags_t modifiers;
+    const struct zmk_keycode_state_changed *event = as_zmk_keycode_state_changed(eh);
+
+    if (event == NULL) {
+        modifiers = zmk_hid_get_explicit_mods();
+    } else if (event->usage_page == HID_USAGE_KEY &&
+               event->keycode >= HID_USAGE_KEY_KEYBOARD_LEFTCONTROL &&
+               event->keycode <= HID_USAGE_KEY_KEYBOARD_RIGHT_GUI) {
+        WRITE_BIT(modifiers, event->keycode - HID_USAGE_KEY_KEYBOARD_LEFTCONTROL, event->state);
+    }
+
+    return (struct modifier_status_state){.modifiers = modifiers};
 }
 
 ZMK_DISPLAY_WIDGET_LISTENER(aekeynox_modifiers, struct modifier_status_state, update_modifiers,
                             get_modifiers)
-ZMK_SUBSCRIPTION(aekeynox_modifiers, zmk_modifiers_state_changed);
+ZMK_SUBSCRIPTION(aekeynox_modifiers, zmk_keycode_state_changed);
 
 static void update_indicators(zmk_hid_indicators_t indicators) {
     struct zmk_widget_status *widget;
