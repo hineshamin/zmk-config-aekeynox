@@ -5,6 +5,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/random/random.h>
 
 #include <zmk/battery.h>
 #include <zmk/display.h>
@@ -19,26 +20,20 @@
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
+LV_IMG_DECLARE(balloon);
+LV_IMG_DECLARE(mountain);
+
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
 struct peripheral_status_state {
     bool connected;
 };
 
-static void clear_canvas(lv_obj_t *canvas) {
+static void draw_top(lv_obj_t *widget, lv_color_t buffer[], const struct status_state *state) {
+    lv_obj_t *top = lv_obj_get_child(widget, 0);
     lv_draw_rect_dsc_t background;
     init_rect_dsc(&background, LVGL_BACKGROUND);
-    lv_canvas_draw_rect(canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE, &background);
-}
-
-static void draw_all(lv_obj_t *widget, lv_color_t top_buffer[], lv_color_t middle_buffer[],
-                     lv_color_t bottom_buffer[], const struct status_state *state) {
-    lv_obj_t *top = lv_obj_get_child(widget, 0);
-    lv_obj_t *middle = lv_obj_get_child(widget, 1);
-    lv_obj_t *bottom = lv_obj_get_child(widget, 2);
-    clear_canvas(top);
-    clear_canvas(middle);
-    clear_canvas(bottom);
+    lv_canvas_draw_rect(top, 0, 0, CANVAS_SIZE, CANVAS_SIZE, &background);
 
     draw_battery(top, state);
     lv_draw_label_dsc_t connection;
@@ -46,13 +41,11 @@ static void draw_all(lv_obj_t *widget, lv_color_t top_buffer[], lv_color_t middl
     lv_canvas_draw_text(top, 0, 0, CANVAS_SIZE, &connection,
                         state->connected ? LV_SYMBOL_WIFI : LV_SYMBOL_CLOSE);
 
-    rotate_canvas(top, top_buffer);
-    rotate_canvas(middle, middle_buffer);
-    rotate_canvas(bottom, bottom_buffer);
+    rotate_canvas(top, buffer);
 }
 
 static void redraw(struct zmk_widget_status *widget) {
-    draw_all(widget->obj, widget->cbuf, widget->cbuf2, widget->cbuf3, &widget->state);
+    draw_top(widget->obj, widget->cbuf, &widget->state);
 }
 
 static void update_battery(struct battery_status_state state) {
@@ -100,13 +93,11 @@ ZMK_DISPLAY_WIDGET_LISTENER(aekeynox_peripheral_connection, struct peripheral_st
 ZMK_SUBSCRIPTION(aekeynox_peripheral_connection, zmk_split_peripheral_status_changed);
 
 #ifdef CONFIG_SHARP_MIP_ROTATE_180
+static const int art_pos = 20;
 static const int top_pos = 0;
-static const int middle_pos = 68;
-static const int bottom_pos = 136;
 #else
+static const int art_pos = 0;
 static const int top_pos = 92;
-static const int middle_pos = 24;
-static const int bottom_pos = -44;
 #endif
 
 int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
@@ -115,12 +106,11 @@ int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
     lv_obj_t *top = lv_canvas_create(widget->obj);
     lv_obj_align(top, LV_ALIGN_TOP_LEFT, top_pos, 0);
     lv_canvas_set_buffer(top, widget->cbuf, CANVAS_SIZE, CANVAS_SIZE, LV_IMG_CF_TRUE_COLOR);
-    lv_obj_t *middle = lv_canvas_create(widget->obj);
-    lv_obj_align(middle, LV_ALIGN_TOP_LEFT, middle_pos, 0);
-    lv_canvas_set_buffer(middle, widget->cbuf2, CANVAS_SIZE, CANVAS_SIZE, LV_IMG_CF_TRUE_COLOR);
-    lv_obj_t *bottom = lv_canvas_create(widget->obj);
-    lv_obj_align(bottom, LV_ALIGN_TOP_LEFT, bottom_pos, 0);
-    lv_canvas_set_buffer(bottom, widget->cbuf3, CANVAS_SIZE, CANVAS_SIZE, LV_IMG_CF_TRUE_COLOR);
+
+    lv_obj_t *art = lv_img_create(widget->obj);
+    bool random = sys_rand32_get() & 1;
+    lv_img_set_src(art, random ? &balloon : &mountain);
+    lv_obj_align(art, LV_ALIGN_TOP_LEFT, art_pos, 0);
 
     sys_slist_append(&widgets, &widget->node);
     aekeynox_peripheral_battery_init();
