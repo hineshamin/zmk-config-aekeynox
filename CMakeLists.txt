@@ -1,4 +1,4 @@
-if(CONFIG_AEKEYNOX_CAPS_WORD_STATUS AND CONFIG_ZMK_BEHAVIOR_CAPS_WORD)
+if(CONFIG_AEKEYNOX_CAPS_WORD_STATUS)
   target_include_directories(app PRIVATE include)
   target_sources(app PRIVATE src/behavior_caps_word_status.c)
   target_sources(app PRIVATE src/events/caps_word_state_changed.c)

@@ -1,7 +1,9 @@
 menu "Aekeynox extensions"
 
 config AEKEYNOX_CAPS_WORD_STATUS
-    bool "Expose Caps Word state to display widgets"
-    default n
+    bool
+    default y
+    depends on DT_HAS_AEKEYNOX_BEHAVIOR_CAPS_WORD_STATUS_ENABLED
+    depends on !ZMK_SPLIT || ZMK_SPLIT_ROLE_CENTRAL
 
 endmenu
