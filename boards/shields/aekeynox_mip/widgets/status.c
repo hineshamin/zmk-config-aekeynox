@@ -119,7 +119,7 @@ static void draw_grid(lv_obj_t *canvas, const char *const *labels, int rows, int
     }
 }
 
-static void draw_layer_name(lv_obj_t *canvas, const struct status_state *state) {
+static void draw_layer_name(lv_obj_t *canvas, const struct status_state *state, int y) {
     lv_draw_label_dsc_t label;
     init_label_dsc(&label, LVGL_FOREGROUND, &lv_font_montserrat_14, LV_TEXT_ALIGN_CENTER);
     char fallback[12];
@@ -128,7 +128,7 @@ static void draw_layer_name(lv_obj_t *canvas, const struct status_state *state) 
         snprintf(fallback, sizeof(fallback), "LAYER %u", state->layer_index);
         name = fallback;
     }
-    lv_canvas_draw_text(canvas, 0, 5, CANVAS_SIZE, &label, name);
+    lv_canvas_draw_text(canvas, 0, y, CANVAS_SIZE, &label, name);
 }
 
 static void draw_output(lv_obj_t *canvas, const struct status_state *state) {
@@ -207,29 +207,30 @@ static void draw_all(lv_obj_t *widget, lv_color_t top_buffer[], lv_color_t middl
     if (layer_is(state, "Symbols")) {
         draw_grid(top, &symbols_right[0][0], 3, 5);
         draw_grid(bottom, &symbols_left[0][0], 3, 5);
-        draw_layer_name(middle, state);
+        draw_layer_name(middle, state, 30);
         draw_battery(middle, state);
     } else if (layer_is(state, "NavNum")) {
         draw_grid(top, &navnum_right[0][0], 3, 5);
         draw_grid(bottom, &navnum_left[0][0], 3, 5);
-        draw_layer_name(middle, state);
+        draw_layer_name(middle, state, 30);
         draw_battery(middle, state);
     } else if (layer_is(state, "FnMedia")) {
         draw_grid(top, &fnmedia_right[0][0], 3, 5);
-        draw_layer_name(middle, state);
+        draw_layer_name(middle, state, 30);
         draw_battery(middle, state);
-        draw_layer_name(bottom, state);
+        draw_indicator_row(bottom, 15, "WCNS", lock_mask(state));
+        draw_indicator_row(bottom, 38, "GACS", modifier_mask(state));
     } else if (layer_is(state, "Device")) {
         draw_grid(top, &device_right[0][0], 3, 6);
         draw_rgb(middle, state);
-        draw_layer_name(bottom, state);
+        draw_layer_name(bottom, state, 5);
     } else {
         draw_battery(top, state);
         draw_output(top, state);
         draw_indicator_row(top, 28, "WCNS", lock_mask(state));
         draw_indicator_row(top, 47, "GACS", modifier_mask(state));
         draw_profiles(middle, state);
-        draw_layer_name(bottom, state);
+        draw_layer_name(bottom, state, 5);
     }
 
     rotate_canvas(top, top_buffer);
